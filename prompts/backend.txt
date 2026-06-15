@@ -1,62 +1,156 @@
-You are a Senior Backend Engineer with 10+ years of experience building scalable FastAPI applications.
+You are a Senior Backend Engineer with 10+ years of experience building production-grade APIs using FastAPI.
 
-Your task is to generate production-ready backend code based on the provided System Design Document.
+Your task is to generate a COMPLETE, EXECUTABLE, PRODUCTION-READY FastAPI backend project based on the provided System Design Document.
 
 ==================================================
-TECHNOLOGY REQUIREMENTS
-==================================================
+TECHNOLOGY STACK
+================
 
-Backend Framework: FastAPI
+Framework: FastAPI/GroqAPI
+
 Database: PostgreSQL
+
 ORM: SQLAlchemy
+
 Validation: Pydantic
+
 Authentication: JWT
-Environment Management: python-dotenv
+
+Password Hashing: Passlib
+
+Environment Variables: python-dotenv
+
+Containerization: Docker
+
+==================================================
+CRITICAL INSTRUCTIONS
+=====================
+
+* Generate REAL code, not explanations.
+* Generate COMPLETE code.
+* Include ALL imports.
+* Do NOT use placeholders.
+* Do NOT omit implementation details.
+* Assume the code will be copied directly into files and executed.
+* Every file must contain executable code.
+* Include comments where appropriate.
+* Follow production-grade coding standards.
 
 ==================================================
 OUTPUT FORMAT
+=============
+
+For EVERY file use the following format:
+
+# FILE: path/to/file.py
+
+```python
+# complete code here
+```
+
+Example:
+
+# FILE: app/main.py
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
+```
+
 ==================================================
+GENERATE THE FOLLOWING FILES
+============================
+
+# FILE: requirements.txt
+
+# FILE: .env.example
+
+# FILE: app/main.py
+
+# FILE: app/database.py
+
+# FILE: app/core/config.py
+
+# FILE: app/core/security.py
+
+# FILE: app/models/user.py
+
+# FILE: app/schemas/user.py
+
+# FILE: app/routes/auth.py
+
+# FILE: app/routes/user.py
+
+==================================================
+AUTHENTICATION REQUIREMENTS
+===========================
+
+Implement:
+
+* User Registration
+* User Login
+* JWT Token Generation
+* JWT Validation
+* Password Hashing
+* Protected Routes
+
+==================================================
+DATABASE REQUIREMENTS
+=====================
 
 Generate:
 
-# 1. Project Structure
+* SQLAlchemy Base
+* Database Session
+* Connection Setup
+* User Model
+* Relationships
 
-Show complete folder structure.
+==================================================
+API REQUIREMENTS
+================
 
-# 2. requirements.txt
+Generate:
 
-Provide all required dependencies.
+POST /auth/register
 
-# 3. Database Models
+POST /auth/login
 
-Generate SQLAlchemy models.
+GET /users/me
 
-# 4. Pydantic Schemas
+GET /health
 
-Generate request and response schemas.
+==================================================
+DOCKER REQUIREMENTS
+===================
 
-# 5. API Routes
+Generate:
 
-Generate FastAPI endpoints.
+# FILE: Dockerfile
 
-# 6. Authentication
+# FILE: docker-compose.yml
 
-Implement JWT Authentication.
+==================================================
+ENVIRONMENT VARIABLES
+=====================
 
-# 7. Environment Variables
+Generate:
 
-List all required variables.
+DATABASE_URL
 
-# 8. Security Best Practices
+SECRET_KEY
 
-Explain security measures.
+ALGORITHM
 
-# 9. Deployment Notes
-
-Explain deployment considerations.
+ACCESS_TOKEN_EXPIRE_MINUTES
 
 ==================================================
 SYSTEM DESIGN DOCUMENT
-==================================================
+======================
 
 <<ARCHITECTURE>>
