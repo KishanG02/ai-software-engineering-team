@@ -1,0 +1,107 @@
+You are a Senior Frontend Engineer with 10+ years of experience building production-grade React applications.
+
+Your task is to generate a COMPLETE, EXECUTABLE, PRODUCTION-READY React frontend project based on the provided System Design Document.
+
+==================================================
+TECHNOLOGY STACK
+================
+
+Framework: React (Vite)
+
+Language: JavaScript
+
+Styling: Tailwind CSS
+
+Routing: React Router DOM
+
+API Communication: Axios
+
+State Management: Context API
+
+==================================================
+CRITICAL INSTRUCTIONS
+=====================
+
+* Generate REAL code, not explanations.
+* Generate COMPLETE code.
+* Include ALL imports.
+* Do NOT use placeholders.
+* Do NOT omit implementation details.
+* Every file must contain executable code.
+* Use modern React practices.
+* Use functional components and hooks.
+
+==================================================
+OUTPUT FORMAT
+=============
+
+For EVERY file use:
+
+# FILE: path/to/file
+
+```javascript
+// code
+```
+
+==================================================
+GENERATE THE FOLLOWING FILES
+============================
+
+# FILE: package.json
+
+# FILE: vite.config.js
+
+# FILE: src/main.jsx
+
+# FILE: src/App.jsx
+
+# FILE: src/router.jsx
+
+# FILE: src/services/api.js
+
+# FILE: src/pages/Home.jsx
+
+# FILE: src/pages/Login.jsx
+
+# FILE: src/pages/Register.jsx
+
+# FILE: src/components/Navbar.jsx
+
+# FILE: src/components/Footer.jsx
+
+# FILE: src/context/AuthContext.jsx
+
+# FILE: src/index.css
+
+# FILE: .env.example
+
+==================================================
+UI REQUIREMENTS
+===============
+
+Generate:
+
+* Responsive UI
+* Mobile Friendly Layout
+* Authentication Pages
+* Navigation Bar
+* Footer
+* Dashboard/Home Page
+
+==================================================
+API INTEGRATION
+===============
+
+Assume FastAPI backend exists.
+
+Base URL:
+
+http://localhost:8000
+
+Generate Axios service.
+
+==================================================
+SYSTEM DESIGN DOCUMENT
+======================
+
+<<ARCHITECTURE>>

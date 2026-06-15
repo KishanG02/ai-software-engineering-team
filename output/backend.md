@@ -13,10 +13,10 @@ python-jose
 
 # FILE: .env.example
 
-```makefile
-DATABASE_URL="postgresql://user:password@localhost:5432/database"
-SECRET_KEY="secret_key"
-ALGORITHM="HS256"
+```bash
+DATABASE_URL=postgresql://user:password@localhost:5432/database
+SECRET_KEY=secret_key
+ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
@@ -25,35 +25,34 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```python
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine
-from app.core.config import settings
 from app.routes.auth import auth_router
 from app.routes.user import user_router
+from app.core.config import settings
 
-app = FastAPI()
-
-app.include_router(auth_router, prefix="/auth")
-app.include_router(user_router, prefix="/users")
-
-origins = [
-    "http://localhost:8000",
-]
+app = FastAPI(
+    title=settings.PROJECT_TITLE,
+    description=settings.PROJECT_DESCRIPTION,
+    version=settings.PROJECT_VERSION,
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
+app.include_router(user_router)
+
 @app.get("/health")
 def health_check():
-    return {"message": "Healthy"}
+    return {"message": "Service is up and running"}
 
-@app.on_event("shutdown")
-def shutdown_event():
-    engine.dispose()
+@app.get("/users/me")
+def read_users_me(current_user: dict = Depends(get_current_active_user)):
+    return current_user
 ```
 
 # FILE: app/database.py
@@ -62,11 +61,14 @@ def shutdown_event():
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
+from sqlalchemy.ext.declarative import declarative_base
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
 
 def get_db():
     db = SessionLocal()
@@ -86,10 +88,13 @@ import os
 load_dotenv()
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
-    SECRET_KEY: str
-    ALGORITHM: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    PROJECT_TITLE: str = "FastAPI Project"
+    PROJECT_DESCRIPTION: str = "A FastAPI project"
+    PROJECT_VERSION: str = "1.0.0"
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 settings = Settings()
 ```
@@ -102,23 +107,23 @@ from python_jose import jwt
 
 pwd_context = CryptContext(schemes=["bcrypt"], default="bcrypt")
 
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
 
-def get_password_hash(password):
+def get_password_hash(password: str):
     return pwd_context.hash(password)
 
-def create_access_token(data: dict, expires_delta):
+def create_access_token(data: dict, expires_delta: int = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
-def get_current_user(token: str):
+def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -129,9 +134,10 @@ def get_current_user(token: str):
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
+        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(username)
+    user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -150,10 +156,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    is_active = Column(Boolean, default=True)
 
-    def __init__(self, email, hashed_password):
-        self.email = email
-        self.hashed_password = hashed_password
+    items = relationship("Item", back_populates="owner")
 ```
 
 # FILE: app/schemas/user.py
@@ -162,13 +167,15 @@ class User(Base):
 from pydantic import BaseModel
 from datetime import datetime
 
-class UserCreate(BaseModel):
+class UserBase(BaseModel):
     email: str
+
+class UserCreate(UserBase):
     password: str
 
-class User(BaseModel):
+class User(UserBase):
     id: int
-    email: str
+    is_active: bool
     created_at: datetime
 
     class Config:
@@ -181,54 +188,61 @@ class User(BaseModel):
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from app.core.security import verify_password, get_password_hash, create_access_token
-from app.database import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, User
+from app.database import get_db
+from sqlalchemy.orm import Session
 
-auth_router = APIRouter()
+router = APIRouter()
 
-@auth_router.post("/register")
-def register(user: UserCreate, db = Depends(get_db)):
-    user_obj = User(email=user.email, hashed_password=get_password_hash(user.password))
-    db.add(user_obj)
-    db.commit()
-    db.refresh(user_obj)
-    return {"message": "User created successfully"}
-
-@auth_router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
+@router.post("/token", response_model=dict)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = get_user(db=get_db(), username=form_data.username)
     if not user:
         raise HTTPException(
-            status_code=400,
-            detail="Incorrect email or password",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     if not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
-            status_code=400,
-            detail="Incorrect email or password",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/register", response_model=User)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = get_user(db, username=user.email)
+    if db_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered",
+        )
+    hashed_password = get_password_hash(user.password)
+    db_user = User(email=user.email, hashed_password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 ```
 
 # FILE: app/routes/user.py
 
 ```python
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, Depends
 from app.core.security import get_current_user
-from app.database import get_db
-from app.models.user import User
 from app.schemas.user import User
 
-user_router = APIRouter()
+router = APIRouter()
 
-@user_router.get("/me")
-def read_users_me(current_user: User = Depends(get_current_user), db = Depends(get_db)):
+@router.get("/me", response_model=User)
+def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 ```
 
@@ -237,14 +251,22 @@ def read_users_me(current_user: User = Depends(get_current_user), db = Depends(g
 ```dockerfile
 FROM python:3.9-slim
 
+# Set working directory to /app
 WORKDIR /app
 
+# Copy requirements file
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code
 COPY . .
 
+# Expose port 8000
+EXPOSE 8000
+
+# Run command to start development server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
@@ -252,7 +274,6 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ```yml
 version: '3'
-
 services:
   app:
     build: .
@@ -265,6 +286,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    restart: always
 
   db:
     image: postgres
@@ -279,10 +301,4 @@ volumes:
   db-data:
 ```
 
-Please note that you need to replace the placeholders in the `.env.example` and `docker-compose.yml` files with your actual database credentials and secret key. Also, you need to create a `database` directory in the root of your project and add a `__init__.py` file to it to make it a package. 
-
-You can run the application using `docker-compose up` and access it at `http://localhost:8000`. You can use a tool like `curl` or a REST client to test the API endpoints. 
-
-Remember to install the required packages using `pip install -r requirements.txt` before building the Docker image. 
-
-Also, please note that this is a basic example and you should consider security and other best practices when building a real-world application.
+Note: This is a basic implementation and you may need to modify it according to your specific requirements. Also, this implementation does not include error handling and logging which are essential for a production-ready application.
