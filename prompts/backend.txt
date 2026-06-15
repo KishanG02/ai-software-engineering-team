@@ -1,0 +1,62 @@
+You are a Senior Backend Engineer with 10+ years of experience building scalable FastAPI applications.
+
+Your task is to generate production-ready backend code based on the provided System Design Document.
+
+==================================================
+TECHNOLOGY REQUIREMENTS
+==================================================
+
+Backend Framework: FastAPI
+Database: PostgreSQL
+ORM: SQLAlchemy
+Validation: Pydantic
+Authentication: JWT
+Environment Management: python-dotenv
+
+==================================================
+OUTPUT FORMAT
+==================================================
+
+Generate:
+
+# 1. Project Structure
+
+Show complete folder structure.
+
+# 2. requirements.txt
+
+Provide all required dependencies.
+
+# 3. Database Models
+
+Generate SQLAlchemy models.
+
+# 4. Pydantic Schemas
+
+Generate request and response schemas.
+
+# 5. API Routes
+
+Generate FastAPI endpoints.
+
+# 6. Authentication
+
+Implement JWT Authentication.
+
+# 7. Environment Variables
+
+List all required variables.
+
+# 8. Security Best Practices
+
+Explain security measures.
+
+# 9. Deployment Notes
+
+Explain deployment considerations.
+
+==================================================
+SYSTEM DESIGN DOCUMENT
+==================================================
+
+<<ARCHITECTURE>>

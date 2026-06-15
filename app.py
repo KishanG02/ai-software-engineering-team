@@ -1,6 +1,6 @@
 from workflows.phase3_workflow import run_phase_3
+from agents.backend_engineer import generate_backend
 from utils.file_manager import save_output
-
 
 def main():
 
@@ -10,12 +10,15 @@ def main():
 
     save_output("prd.md", result["prd"])
 
-    save_output(
-        "architecture.md",
-        result["architecture"]
-    )
+    save_output("architecture.md", result["architecture"])
 
-    print(result["architecture"])
+    print("\nGenerating Backend...\n")
+
+    backend_code = generate_backend(result["architecture"])
+
+    save_output("backend.md",backend_code)
+
+    print("\nFiles saved successfully!")
 
 if __name__ == "__main__":
     main()

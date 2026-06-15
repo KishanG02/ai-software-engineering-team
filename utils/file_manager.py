@@ -1,24 +1,18 @@
-import os
+from pathlib import Path
 
-def save_outputs(   
-    filename : str,
-    content : str
-):
-    os.makedirs(
-        "output", 
-        exist_ok= True
-    )
 
-    filepath = os.path.join(
-        "output",
-        filename
-    )
+def save_output(
+    filename: str,
+    content: str
+) -> str:
+    output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
 
-    with open(
-        f"output/{filename}", 
-        "w", 
+    filepath = output_dir / filename
+
+    filepath.write_text(
+        content,
         encoding="utf-8"
-    ) as f:
-        f.write(content)
+    )
 
-    return filepath
+    return str(filepath)
