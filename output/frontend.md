@@ -1,90 +1,90 @@
+Here are the complete files for the LoveConnect React frontend project:
+
 # FILE: package.json
-```json
+
+```javascript
 {
-  "name": "financial-platform",
+  "name": "loveconnect",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite serve"
+    "start": "vite build && vite preview"
   },
   "dependencies": {
-    "axios": "^1.1.2",
+    "@tailwindcss/forms": "^0.4.0",
+    "@tailwindcss/typography": "^0.5.2",
+    "axios": "^1.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0",
-    "tailwindcss": "^3.1.8"
+    "react-router-dom": "^6.4.3",
+    "tailwindcss": "^3.2.4",
+    "vite": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.0.0",
-    "vite": "^3.0.0"
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-router-dom": "^6.3.1",
+    "@types/tailwindcss": "^3.2.4",
+    "typescript": "^4.7.4"
   }
 }
 ```
 
 # FILE: vite.config.js
+
 ```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
   plugins: [react()],
   css: {
-    postcss: './postcss.config.js',
+    modules: {
+      localsConvention: 'camelCaseOnly',
+    },
+    preprocessorOptions: {
+      tailwindcss: {
+        config: './tailwind.config.js',
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
 });
 ```
 
 # FILE: src/main.jsx
+
 ```javascript
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import App from './App';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+ReactDOM.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 ```
 
 # FILE: src/App.jsx
+
 ```javascript
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-
-function App() {
-  return (
-    <div>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-      <Footer />
-    </div>
-  );
-}
-
-export default App;
-```
-
-# FILE: src/router.jsx
-```javascript
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
-const Router = () => {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -94,12 +94,39 @@ const Router = () => {
       </Routes>
     </BrowserRouter>
   );
-};
+}
 
-export default Router;
+export default App;
+```
+
+# FILE: src/router.jsx
+
+```javascript
+import { createBrowserRouter } from 'react-router-dom';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+  },
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
+]);
+
+export default router;
 ```
 
 # FILE: src/services/api.js
+
 ```javascript
 import axios from 'axios';
 
@@ -107,64 +134,49 @@ const api = axios.create({
   baseURL: 'http://localhost:8000',
 });
 
-export const registerUser = async (data) => {
-  try {
-    const response = await api.post('/api/v1/users', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const loginUser = async (data) => {
-  try {
-    const response = await api.post('/api/v1/login', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getCreditCards = async () => {
-  try {
-    const response = await api.get('/api/v1/credit-cards');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+export default api;
 ```
 
 # FILE: src/pages/Home.jsx
+
 ```javascript
 import React from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
-const Home = () => {
+function Home() {
   return (
     <div>
-      <h1>Welcome to the Financial Platform</h1>
+      <Navbar />
+      <h1>Welcome to LoveConnect!</h1>
+      <Footer />
     </div>
   );
-};
+}
 
 export default Home;
 ```
 
 # FILE: src/pages/Login.jsx
+
 ```javascript
 import React, { useState } from 'react';
-import { loginUser } from '../services/api';
+import axios from '../services/api';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
-const Login = () => {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const data = { email, password };
-      const response = await loginUser(data);
-      console.log(response);
+      const response = await axios.post('/api/v1/login', {
+        email,
+        password,
+      });
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -172,43 +184,51 @@ const Login = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
-        </label>
-        <br />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
         <button type="submit">Login</button>
       </form>
+      <Footer />
     </div>
   );
-};
+}
 
 export default Login;
 ```
 
 # FILE: src/pages/Register.jsx
+
 ```javascript
 import React, { useState } from 'react';
-import { registerUser } from '../services/api';
+import axios from '../services/api';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
-const Register = () => {
+function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const data = { email, password };
-      const response = await registerUser(data);
-      console.log(response);
+      const response = await axios.post('/api/v1/register', {
+        email,
+        password,
+      });
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -216,38 +236,38 @@ const Register = () => {
 
   return (
     <div>
+      <Navbar />
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
-        </label>
-        <br />
-        <label>
-          Confirm Password:
-          <input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} />
-        </label>
-        <br />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
         <button type="submit">Register</button>
       </form>
+      <Footer />
     </div>
   );
-};
+}
 
 export default Register;
 ```
 
 # FILE: src/components/Navbar.jsx
+
 ```javascript
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar = () => {
+function Navbar() {
   return (
     <nav>
       <ul>
@@ -263,63 +283,90 @@ const Navbar = () => {
       </ul>
     </nav>
   );
-};
+}
 
 export default Navbar;
 ```
 
 # FILE: src/components/Footer.jsx
-```javascript
-import React from 'react';
 
-const Footer = () => {
+```javascript
+function Footer() {
   return (
     <footer>
-      <p>&copy; 2024 Financial Platform</p>
+      <p>&copy; 2023 LoveConnect</p>
     </footer>
   );
-};
+}
 
 export default Footer;
 ```
 
 # FILE: src/context/AuthContext.jsx
+
 ```javascript
 import React, { createContext, useState } from 'react';
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  const login = (userData) => {
-    setUser(userData);
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export { AuthProvider, AuthContext };
 ```
 
 # FILE: src/index.css
+
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  clear: both;
+}
 ```
 
 # FILE: .env.example
-```makefile
-VITE_PORT=3000
-VITE_BASE_URL=http://localhost:3000
-API_BASE_URL=http://localhost:8000
+
+```bash
+VITE_API_URL=http://localhost:8000
 ```
+
+This code sets up a basic React frontend project with Tailwind CSS, React Router, and Axios for API communication. It also includes a simple authentication system using a context API. The project uses a .env file to store environment variables, which can be replaced with actual values in a production environment.

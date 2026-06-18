@@ -1,50 +1,81 @@
 # 1. Executive Summary
-The proposed system is a digital platform that provides a comprehensive suite of financial services, rewards, and benefits to its users. The platform aims to create a seamless and personalized experience for users, driving engagement, loyalty, and revenue growth. The system will have the following key benefits:
-* A user-friendly and secure interface for managing financial services, rewards, and benefits
-* A comprehensive suite of features, including credit card management, rewards tracking, travel booking, and exclusive benefits
-* Personalized experiences and targeted offers to drive user engagement and loyalty
-* A scalable and secure architecture to support a large user base
+
+## Purpose
+LoveConnect is a modern dating app designed to help users find meaningful connections and relationships.
+
+## Business Goals
+Our mission is to create a safe, inclusive, and user-friendly platform that fosters genuine interactions and relationships.
+
+## Target Users
+Demographics: 18-45 years old, urban, and educated
+Psychographics: Individuals seeking meaningful relationships, interested in technology, and value user experience
+
+## Key Benefits
+- AI-driven matchmaking
+- User-centric design
+- Robust safety features
+- Intuitive and user-friendly experience
+- Freemium model and in-app purchases
 
 # 2. System Overview
-The system will have the following components:
-* Product Vision: To create a digital platform that provides a comprehensive suite of financial services, rewards, and benefits to its users
-* User Journey: Users will be able to register for an account, log in securely, and access their financial information and rewards
-* Core Functionalities:
-	+ User registration and profile management
-	+ Credit card management (application, activation, payment)
-	+ Rewards tracking and redemption
-	+ Travel booking and management
-	+ Exclusive benefits and partnerships
-* High-Level Workflow:
-	1. User registration and login
-	2. Credit card application and management
-	3. Rewards tracking and redemption
-	4. Travel booking and management
-	5. Exclusive benefits and partnerships
+
+## Product Vision
+LoveConnect aims to revolutionize the dating app landscape by providing a unique value proposition for users.
+
+## User Journey
+1. User profile creation
+2. Matchmaking algorithm
+3. Chat and messaging
+4. Safety features (reporting and blocking)
+
+## Core Functionalities
+- User profile creation
+- Matchmaking algorithm
+- Chat and messaging
+- Safety features
+
+## High-Level Workflow
+1. User creates a profile
+2. Algorithm matches users based on compatibility, interests, and preferences
+3. Users engage in text-based conversations with matches
+4. Users report suspicious behavior or block users
 
 # 3. High-Level Architecture
+
 ## Architecture Explanation
-The system will have a microservices-based architecture, with each component communicating with others through APIs. The system will use a combination of relational and NoSQL databases to store user data, transaction history, and rewards information.
+The system consists of the following components:
+- Frontend: React + Tailwind CSS
+- Backend: FastAPI
+- Database: PostgreSQL
+- Cache: Redis
+- Vector Database: ChromaDB
+- Message Queue: RabbitMQ
+- Containerization: Docker
+- CI/CD: GitHub Actions
+- Cloud Platform: AWS
+
 ## System Architecture Diagram
+
 ```mermaid
 graph TD
+
 A[React Frontend]
 B[FastAPI Backend]
 C[PostgreSQL]
 D[Redis]
 E[ChromaDB]
-F[RabbitMQ]
 
 A --> B
 B --> C
 B --> D
 B --> E
-B --> F
 ```
 
 # 4. Data Flow Diagram
+
 ```mermaid
 sequenceDiagram
+
 User->>Frontend: Submit Request
 Frontend->>Backend: API Call
 Backend->>Database: Fetch Data
@@ -54,206 +85,251 @@ Frontend-->>User: Display Output
 ```
 
 # 5. Recommended Technology Stack
+
 | Layer | Technology | Reason |
-| --- | --- | --- |
-| Frontend | React | Scalable, maintainable, and widely adopted |
-| Backend | FastAPI | Fast, scalable, and secure |
-| Database | PostgreSQL | Relational database with strong consistency and scalability |
-| Cache | Redis | In-memory caching for improved performance |
-| Vector Database | ChromaDB | Scalable and efficient vector database for rewards and benefits |
-| Messaging | RabbitMQ | Reliable and scalable message queue for asynchronous processing |
-| Authentication | OAuth | Secure and widely adopted authentication protocol |
-| Monitoring | Prometheus | Scalable and widely adopted monitoring system |
-| Deployment | Docker | Containerization for easy deployment and management |
-| Cloud | AWS | Scalable and secure cloud platform with a wide range of services |
+|---------|------------|---------|
+| Frontend | React + Tailwind CSS | Scalable, maintainable, and user-friendly |
+| Backend | FastAPI | High-performance, scalable, and secure |
+| Database | PostgreSQL | Robust, scalable, and reliable |
+| Cache | Redis | Fast, scalable, and easy to use |
+| Vector Database | ChromaDB | High-performance, scalable, and efficient |
+| Message Queue | RabbitMQ | Scalable, reliable, and fault-tolerant |
+| Containerization | Docker | Portable, scalable, and efficient |
+| CI/CD | GitHub Actions | Scalable, reliable, and automated |
+| Cloud Platform | AWS | Scalable, secure, and reliable |
 
 # 6. Core Components
-* User Service: responsible for user registration, profile management, and authentication
-* Credit Card Service: responsible for credit card application, activation, and payment
-* Rewards Service: responsible for rewards tracking and redemption
-* Travel Service: responsible for travel booking and management
-* Exclusive Benefits Service: responsible for exclusive benefits and partnerships
+
+## User Service
+- Name: User Service
+- Purpose: Manage user profiles and interactions
+- Responsibilities:
+	+ User profile creation
+	+ Matchmaking algorithm
+	+ Chat and messaging
+
+## Authentication Service
+- Name: Authentication Service
+- Purpose: Manage user authentication and authorization
+- Responsibilities:
+	+ User authentication
+	+ Authorization and access control
+
+## Payment Service
+- Name: Payment Service
+- Purpose: Manage in-app purchases and payments
+- Responsibilities:
+	+ In-app purchases
+	+ Payment processing
+
+## Notification Service
+- Name: Notification Service
+- Purpose: Manage user notifications and alerts
+- Responsibilities:
+	+ User notifications
+	+ Alert management
+
+## Analytics Service
+- Name: Analytics Service
+- Purpose: Manage user analytics and insights
+- Responsibilities:
+	+ User analytics
+	+ Insights and reporting
+
+## AI Processing Service
+- Name: AI Processing Service
+- Purpose: Manage AI-driven matchmaking and recommendations
+- Responsibilities:
+	+ Matchmaking algorithm
+	+ Recommendations and suggestions
 
 # 7. Database Design
+
 ## Database Type
-The system will use a combination of relational and NoSQL databases.
+Relational database (PostgreSQL)
+
 ## Entities
-* Users
-* Credit Cards
-* Rewards
-* Travel Bookings
-* Exclusive Benefits
+- Users
+- Matches
+- Conversations
+- Messages
+- Reports
+
 ## Relationships
-* A user can have multiple credit cards
-* A credit card can have multiple rewards
-* A user can have multiple travel bookings
-* A travel booking can have multiple exclusive benefits
+- One-to-many: User to Matches
+- One-to-many: User to Conversations
+- One-to-many: Conversation to Messages
+- One-to-many: User to Reports
+
 ## Database Schema
+
 ### Users Table
+
 | Column | Type | Constraints |
-| --- | --- | --- |
+|----------|----------|------------|
 | id | UUID | PK |
 | email | VARCHAR | UNIQUE |
 | created_at | TIMESTAMP | NOT NULL |
-### Credit Cards Table
+
+### Matches Table
+
 | Column | Type | Constraints |
-| --- | --- | --- |
-| id | UUID | PK |
+|----------|----------|------------|
+| match_id | UUID | PK |
 | user_id | UUID | FK |
-| card_number | VARCHAR | NOT NULL |
-| expiration_date | DATE | NOT NULL |
-### Rewards Table
+| match_date | TIMESTAMP | NOT NULL |
+
+### Conversations Table
+
 | Column | Type | Constraints |
-| --- | --- | --- |
-| id | UUID | PK |
-| credit_card_id | UUID | FK |
-| reward_type | VARCHAR | NOT NULL |
-| reward_value | INTEGER | NOT NULL |
+|----------|----------|------------|
+| conversation_id | UUID | PK |
+| user_id | UUID | FK |
+| conversation_date | TIMESTAMP | NOT NULL |
+
+### Messages Table
+
+| Column | Type | Constraints |
+|----------|----------|------------|
+| message_id | UUID | PK |
+| conversation_id | UUID | FK |
+| message_date | TIMESTAMP | NOT NULL |
+
+### Reports Table
+
+| Column | Type | Constraints |
+|----------|----------|------------|
+| report_id | UUID | PK |
+| user_id | UUID | FK |
+| report_date | TIMESTAMP | NOT NULL |
+
 ## ERD Explanation
-The system will have a complex entity-relationship diagram, with multiple relationships between entities.
+The entities are connected through relationships, allowing for efficient data retrieval and manipulation.
 
 # 8. API Design
-## User Service
-### POST /api/v1/users
-* Purpose: Create a new user
-* Request Payload: { email, password }
-* Response Payload: { id, email }
-### GET /api/v1/users/{id}
-* Purpose: Get a user by ID
-* Request Payload: None
-* Response Payload: { id, email }
-## Credit Card Service
-### POST /api/v1/credit-cards
-* Purpose: Create a new credit card
-* Request Payload: { user_id, card_number, expiration_date }
-* Response Payload: { id, user_id, card_number }
-### GET /api/v1/credit-cards/{id}
-* Purpose: Get a credit card by ID
-* Request Payload: None
-* Response Payload: { id, user_id, card_number }
+
+## REST API Specifications
+
+### User API
+
+- POST /api/v1/users: Create a new user
+- GET /api/v1/users/{id}: Retrieve a user by ID
+- PUT /api/v1/users/{id}: Update a user
+- DELETE /api/v1/users/{id}: Delete a user
+
+### Match API
+
+- GET /api/v1/matches: Retrieve all matches for a user
+- POST /api/v1/matches: Create a new match
+- PUT /api/v1/matches/{id}: Update a match
+- DELETE /api/v1/matches/{id}: Delete a match
+
+### Conversation API
+
+- GET /api/v1/conversations: Retrieve all conversations for a user
+- POST /api/v1/conversations: Create a new conversation
+- PUT /api/v1/conversations/{id}: Update a conversation
+- DELETE /api/v1/conversations/{id}: Delete a conversation
+
+### Message API
+
+- GET /api/v1/messages: Retrieve all messages for a conversation
+- POST /api/v1/messages: Create a new message
+- PUT /api/v1/messages/{id}: Update a message
+- DELETE /api/v1/messages/{id}: Delete a message
+
+### Report API
+
+- GET /api/v1/reports: Retrieve all reports for a user
+- POST /api/v1/reports: Create a new report
+- PUT /api/v1/reports/{id}: Update a report
+- DELETE /api/v1/reports/{id}: Delete a report
 
 # 9. Authentication & Authorization
+
 ## Authentication Strategy
-The system will use OAuth for authentication.
+- JWT (JSON Web Token) for authentication
+- OAuth 2.0 for authorization
+
 ## JWT Usage
-The system will use JSON Web Tokens (JWT) for authentication and authorization.
+- Generate a JWT token upon successful user authentication
+- Validate the JWT token on each API request
+
 ## Session Handling
-The system will use a stateless session handling approach, with JWT stored in local storage.
+- Use a session store to manage user sessions
+- Store the JWT token in the session store
+
 ## OAuth Support
-The system will support OAuth 2.0 for authentication and authorization.
+- Implement OAuth 2.0 for authorization
+- Use OAuth 2.0 to authenticate users
+
 ## Role-Based Access Control (RBAC)
-The system will use RBAC for authorization, with roles defined for users and credit cards.
+- Define user roles and permissions
+- Use RBAC to control access to resources
+
+## User Roles and Permissions
+- Admin: Full access to all resources
+- Moderator: Access to moderation tools
+- User: Access to user resources
 
 # 10. Security Considerations
+
 ## Input Validation
-The system will use input validation to prevent SQL injection and cross-site scripting (XSS) attacks.
+- Validate user input to prevent SQL injection and cross-site scripting (XSS) attacks
+
 ## API Security
-The system will use API keys and JWT for authentication and authorization.
+- Use HTTPS to encrypt API requests and responses
+- Implement rate limiting to prevent brute-force attacks
+
 ## JWT Security
-The system will use secure JWT storage and transmission.
+- Use a secure secret key to sign JWT tokens
+- Implement token blacklisting to prevent token reuse
+
 ## Password Hashing
-The system will use password hashing for secure password storage.
+- Use a secure password hashing algorithm (e.g., bcrypt)
+- Store hashed passwords in the database
+
 ## Secrets Management
-The system will use secrets management for secure storage and transmission of sensitive data.
+- Use a secrets manager to store sensitive data (e.g., API keys)
+- Rotate secrets regularly to prevent compromise
+
 ## Encryption at Rest
-The system will use encryption at rest for secure data storage.
+- Use encryption to protect data at rest
+- Use a secure encryption algorithm (e.g., AES)
+
 ## Encryption in Transit
-The system will use encryption in transit for secure data transmission.
+- Use HTTPS to encrypt data in transit
+- Use a secure encryption algorithm (e.g., TLS)
+
 ## Rate Limiting
-The system will use rate limiting to prevent brute-force attacks.
+- Implement rate limiting to prevent brute-force attacks
+- Use a rate limiting algorithm (e.g., token bucket)
+
 ## CORS
-The system will use CORS to prevent cross-origin resource sharing attacks.
+- Implement CORS to allow cross-origin requests
+- Use a secure CORS policy (e.g., allow-origin)
+
 ## OWASP Top 10 Mitigation
-The system will mitigate the OWASP Top 10 security risks, including injection, broken authentication, and sensitive data exposure.
+- Implement mitigation strategies for OWASP Top 10 vulnerabilities
+- Use a secure coding practice (e.g., secure coding guidelines)
 
 # 11. Scalability Considerations
+
 ## Horizontal Scaling
-The system will use horizontal scaling to increase capacity and improve performance.
+- Use a load balancer to distribute traffic across multiple instances
+- Use a scalable database solution (e.g., sharding)
+
 ## Vertical Scaling
-The system will use vertical scaling to increase capacity and improve performance.
+- Use a cloud provider to scale instances vertically
+- Use a scalable storage solution (e.g., object storage)
+
 ## Load Balancing
-The system will use load balancing to distribute traffic and improve performance.
+- Use a load balancer to distribute traffic across multiple instances
+- Use a scalable load balancing solution (e.g., HAProxy)
+
 ## Auto Scaling
-The system will use auto scaling to automatically adjust capacity and improve performance.
+- Use a cloud provider to scale instances automatically
+- Use a scalable auto scaling solution (e.g., AWS Auto Scaling)
+
 ## Database Scaling
-The system will use database scaling to increase capacity and improve performance.
-## Read Replicas
-The system will use read replicas to improve performance and reduce latency.
-## Sharding
-The system will use sharding to improve performance and reduce latency.
-## Caching Strategy
-The system will use caching to improve performance and reduce latency.
-## Queue-Based Processing
-The system will use queue-based processing to improve performance and reduce latency.
-
-# 12. Monitoring & Logging
-## Application Monitoring
-The system will use application monitoring to track performance and identify issues.
-## Infrastructure Monitoring
-The system will use infrastructure monitoring to track performance and identify issues.
-## Distributed Tracing
-The system will use distributed tracing to track requests and identify issues.
-## Log Aggregation
-The system will use log aggregation to collect and analyze logs.
-## Error Tracking
-The system will use error tracking to track and resolve errors.
-## Alerting
-The system will use alerting to notify teams of issues and errors.
-
-# 13. Deployment Architecture
-## Development Environment
-The system will use a development environment for testing and debugging.
-## Staging Environment
-The system will use a staging environment for testing and quality assurance.
-## Production Environment
-The system will use a production environment for deployment and operation.
-## Docker
-The system will use Docker for containerization and deployment.
-## GitHub Actions
-The system will use GitHub Actions for continuous integration and deployment.
-## AWS Deployment Strategy
-The system will use AWS for deployment and operation.
-
-# 14. Cost Optimization Strategy
-## Efficient Resource Usage
-The system will use efficient resource usage to reduce costs.
-## Auto Scaling
-The system will use auto scaling to reduce costs and improve performance.
-## Storage Optimization
-The system will use storage optimization to reduce costs and improve performance.
-## Compute Optimization
-The system will use compute optimization to reduce costs and improve performance.
-## Monitoring Costs
-The system will use monitoring costs to track and optimize costs.
-
-# 15. Risks & Challenges
-## Technical Risks
-The system will face technical risks, including scalability and performance issues.
-## Security Risks
-The system will face security risks, including data breaches and cyber attacks.
-## Scalability Risks
-The system will face scalability risks, including increased traffic and usage.
-## Operational Risks
-The system will face operational risks, including downtime and outages.
-
-# 16. Disaster Recovery & Backup Strategy
-## Database Backup Strategy
-The system will use a database backup strategy to ensure data recovery.
-## Recovery Procedures
-The system will use recovery procedures to ensure business continuity.
-## Failover Mechanisms
-The system will use failover mechanisms to ensure high availability.
-## High Availability Design
-The system will use a high availability design to ensure uptime and performance.
-
-# 17. Future Architecture Enhancements
-## Microservices Migration
-The system will migrate to microservices to improve scalability and performance.
-## Event-Driven Architecture
-The system will use an event-driven architecture to improve scalability and performance.
-## AI Integration
-The system will integrate AI to improve user experience and personalize recommendations.
-## Multi-Region Deployment
-The system will deploy in multiple regions to improve performance and reduce latency.
-## Global Scaling
-The system will scale globally to improve performance and reduce latency.
+-

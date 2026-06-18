@@ -1,6 +1,7 @@
 from llm import llm
 
 def generate_architecture(prd: str):
+    
     with open(
         "prompts/architect.txt",
         "r",

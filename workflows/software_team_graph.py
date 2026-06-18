@@ -22,6 +22,11 @@ def architect_node(state):
         state["prd"]
     )
 
+    print(
+        f"Architecture Length in Architect Node: "
+        f"{len(architecture)}"
+    )
+
     return {
         "architecture": architecture
     }
@@ -37,6 +42,15 @@ def backend_node(state):
     }
 
 def frontend_node(state):
+
+    print("\n===== FRONTEND STATE =====")
+    print(state.keys())
+    print("==========================\n")
+
+    print(
+        f"Architecture Length in Frontend Node: "
+        f"{len(state['architecture'])}"
+    )
 
     frontend = generate_frontend(
         state["architecture"]
